@@ -14,7 +14,10 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
