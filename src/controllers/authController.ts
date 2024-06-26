@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../entities/user";
 import jwt from "jsonwebtoken";
+import { redisClient } from "../redisClient";
 
 const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
@@ -23,6 +24,10 @@ const registerUser = async (req: Request, res: Response) => {
 const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required" });
+  }
+
   try {
     const user = await User.findOneBy({ email });
     if (!user) {
@@ -38,13 +43,28 @@ const loginUser = async (req: Request, res: Response) => {
       expiresIn: "1h",
     });
 
-    res.json({ token });
+    return res.json({ token });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error logging in", error });
+    return res.status(500).json({ message: "Error logging in", error });
   }
 };
 
-const logoutUser = (req: Request, res: Response) => {};
+const logoutUser = async (req: Request, res: Response) => {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+
+  if (token) {
+    try {
+      await redisClient.set(token, "blacklisted");
+      await redisClient.expire(token, 3600); // 1시간 후 만료
+      res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+      console.error("Redis error:", error);
+      res.status(500).json({ message: "Error logging out", error });
+    }
+  } else {
+    res.status(400).json({ message: "No token provided" });
+  }
+};
 
 export { registerUser, loginUser, logoutUser };
