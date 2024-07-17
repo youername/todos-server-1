@@ -3,6 +3,7 @@ import authRouter from "./routes/authRouter";
 import AppDataSource from "./data-source";
 import { connectRedis } from "./redisClient";
 import { authenticateUser } from "./middleWare/authenticateUser";
+const cors = require("cors");
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -24,8 +25,10 @@ connectRedis()
     console.error("Error connecting to Redis:", err);
   });
 
+app.use(cors());
+
 app.get("/protected", authenticateUser, (req, res) => {
-  res.json({ message: `Welcome user with ID ${req.user?.id}` });
+  res.json(req.user);
 });
 
 app.use(express.json());
