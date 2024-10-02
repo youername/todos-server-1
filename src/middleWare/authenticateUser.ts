@@ -26,10 +26,10 @@ export const authenticateUser = async (
       return res.status(401).json({ message: "Token is blacklisted" });
     }
 
-    console.log("token", token);
+    // console.log("token", token);
 
     const decoded = jwt.verify(token, "your_jwt_secret") as JwtPayload;
-    console.log("decoded", decoded);
+    // console.log("decoded", decoded);
 
     if (!decoded) {
       return res.status(401).json({ message: "Token is not valid" });

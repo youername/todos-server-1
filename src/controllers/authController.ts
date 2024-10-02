@@ -4,13 +4,15 @@ import jwt from "jsonwebtoken";
 import { redisClient } from "../redisClient";
 
 const registerUser = async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, photoUrl } = req.body;
+  console.log("photoUrl", photoUrl);
 
   try {
     const user = new User();
     user.name = name;
     user.email = email;
     user.password = password;
+    user.photoUrl = photoUrl;
 
     await user.save();
 
@@ -51,6 +53,8 @@ const loginUser = async (req: Request, res: Response) => {
 };
 
 const logoutUser = async (req: Request, res: Response) => {
+  console.log(req.header);
+
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (token) {
