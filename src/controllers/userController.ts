@@ -14,8 +14,9 @@ export const updateUser = async (req: Request, res: Response) => {
       console.error("--== es ==-- No token, authorization denied");
       return;
     }
-    const isBlacklisted = await redisClient.get(token);
-    if (isBlacklisted) {
+
+    const isExist = await redisClient.get(token);
+    if (!isExist) {
       console.error("--== es ==-- Token is blacklisted");
       return;
     }
@@ -24,6 +25,8 @@ export const updateUser = async (req: Request, res: Response) => {
       token,
       "--== es ==-- your_jwt_secret"
     ) as JwtPayload;
+
+    console.log("decoded", decoded);
 
     if (!decoded) {
       console.error("--== es ==-- Token is not valid");
