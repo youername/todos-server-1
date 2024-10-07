@@ -17,7 +17,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
     const isExist = await redisClient.get(token);
     if (!isExist) {
-      console.error("--== es ==-- Token is blacklisted");
+      console.error("--== es ==-- Token is not fonud");
       return;
     }
 

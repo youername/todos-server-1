@@ -19,17 +19,19 @@ export const authenticateUser = async (
   }
 
   try {
-    await connectRedis(); // Redis 연결 확인
+    // await connectRedis(); // Redis 연결 확인
+
+    console.log("--authenticateUser--token", token);
 
     const isBlacklisted = await redisClient.get(token);
-    if (isBlacklisted) {
+    if (isBlacklisted === "isBlacklisted") {
       return res.status(204).json({ message: "Token is blacklisted" });
     }
 
-    // console.log("token", token);
+    console.log("token", token);
 
     const decoded = jwt.verify(token, "your_jwt_secret") as JwtPayload;
-    // console.log("decoded", decoded);
+    console.log("decoded", decoded);
 
     if (!decoded) {
       return res.status(204).json({ message: "Token is not valid" });

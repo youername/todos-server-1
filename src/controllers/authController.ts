@@ -45,9 +45,11 @@ const loginUser = async (req: Request, res: Response) => {
       expiresIn: "1h",
     });
 
+    console.log("login---", token, String(user.id));
+
     // Redis에 토큰 저장 (토큰을 키로 사용)
-    await redisClient.set(token, user.id.toString(), {
-      EX: 10 * 60, // 1시간 (토큰의 유효기간과 일치)
+    await redisClient.set(token, String(user.id), {
+      EX: 10 * 60, // 10시간 (토큰의 유효기간과 일치)
     });
 
     return res.json({ token });
