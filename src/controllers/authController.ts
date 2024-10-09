@@ -5,7 +5,6 @@ import { redisClient } from "../redisClient";
 
 const registerUser = async (req: Request, res: Response) => {
   const { name, email, password, photoUrl } = req.body;
-  console.log("photoUrl", photoUrl);
 
   try {
     const user = new User();
@@ -44,8 +43,6 @@ const loginUser = async (req: Request, res: Response) => {
     const token = jwt.sign({ id: user.id }, "your_jwt_secret", {
       expiresIn: "1h",
     });
-
-    console.log("login---", token, String(user.id));
 
     // Redis에 토큰 저장 (토큰을 키로 사용)
     await redisClient.set(token, String(user.id), {
