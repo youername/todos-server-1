@@ -35,6 +35,8 @@ export const updateUser = async (req: Request, res: Response) => {
       photoBase64,
     });
 
+    await user.save();
+
     return res.status(200).json({ message: "User updated successfully", user });
   } catch (error) {
     console.error("Error updating user:", error);
