@@ -4,14 +4,14 @@ import jwt from "jsonwebtoken";
 import { redisClient } from "../redisClient";
 
 const registerUser = async (req: Request, res: Response) => {
-  const { name, email, password, photoUrl } = req.body;
+  const { name, email, password, photoBase64 } = req.body;
 
   try {
     const user = new User();
     user.name = name;
     user.email = email;
     user.password = password;
-    user.photoUrl = photoUrl;
+    user.photoBase64 = photoBase64;
 
     await user.save();
 
