@@ -13,6 +13,6 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 
-router.patch("/userUpdate", authenticateUser, updateUser);
+router.patch("/updateUser", authenticateUser, updateUser);
 
 export default router;
