@@ -12,7 +12,7 @@ interface UpdateUserData {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    console.log("updateUser", updateUser);
+    // console.log("updateUser", updateUser);
 
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });
