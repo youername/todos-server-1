@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import User from "../entities/user";
+import User, { Gender } from "../entities/user";
 
 interface UpdateUserData {
   name?: string;
-  photoUrl?: string;
   address?: string;
   studentNum?: string;
   photoBase64?: string;
+  gender?: Gender;
 }
 
 export const updateUser = async (req: Request, res: Response) => {
@@ -24,15 +24,15 @@ export const updateUser = async (req: Request, res: Response) => {
     }
 
     // Update user fields
-    const { name, photoUrl, address, studentNum, photoBase64 }: UpdateUserData =
+    const { name, address, studentNum, photoBase64, gender }: UpdateUserData =
       req.body;
 
     Object.assign(user, {
       name,
-      photoUrl,
       address,
       studentNum,
       photoBase64,
+      gender,
     });
 
     await user.save();
