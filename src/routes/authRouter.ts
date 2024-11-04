@@ -9,6 +9,7 @@ import { updateUser } from "../controllers/userController";
 import {
   createTodo,
   getTodos,
+  removeTodo,
   updateTodo,
   updateTodoIsDone,
 } from "../controllers/todoController";
@@ -25,5 +26,6 @@ router.post("/createTodo", authenticateUser, createTodo);
 router.get("/getTodos", authenticateUser, getTodos);
 router.patch("/updateTodoIsDone", authenticateUser, updateTodoIsDone);
 router.patch("/updateTodo", authenticateUser, updateTodo);
+router.delete("/removeTodo", authenticateUser, removeTodo);
 
 export default router;

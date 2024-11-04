@@ -17,5 +17,6 @@ router.post("/createTodo", authenticateUser_1.authenticateUser, todoController_1
 router.get("/getTodos", authenticateUser_1.authenticateUser, todoController_1.getTodos);
 router.patch("/updateTodoIsDone", authenticateUser_1.authenticateUser, todoController_1.updateTodoIsDone);
 router.patch("/updateTodo", authenticateUser_1.authenticateUser, todoController_1.updateTodo);
+router.delete("/removeTodo", authenticateUser_1.authenticateUser, todoController_1.removeTodo);
 exports.default = router;
 //# sourceMappingURL=authRouter.js.map

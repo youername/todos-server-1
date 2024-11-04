@@ -18,7 +18,7 @@ const createTodo = async (req, res) => {
             todo.user = user;
         }
         await todo.save();
-        res.status(200).json({ message: "Todo created successfully" });
+        res.status(200).json({ message: "Todo created successfully", todo });
     }
     catch (error) {
         res.status(500).json({ message: "Error creating user", error });
@@ -95,6 +95,28 @@ const updateTodoIsDone = async (req, res) => {
     }
 };
 exports.updateTodoIsDone = updateTodoIsDone;
-const removeTodo = async (req, res) => { };
+const removeTodo = async (req, res) => {
+    var _a;
+    const { id } = req.body;
+    try {
+        const user = await user_1.default.findOneBy({ id: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id });
+        if (!user) {
+            throw res.status(400).json({ message: "Not found user" });
+        }
+        const todo = await todo_1.Todo.findOneBy({ id, user });
+        if (!todo) {
+            throw res
+                .status(400)
+                .json({ message: "Not found todo or don't have permission" });
+        }
+        console.log("to delete");
+        await todo_1.Todo.delete({ id });
+        console.log("deleted");
+        res.status(200).json({ message: "deleted todo" });
+    }
+    catch (error) {
+        res.status(500).json({ message: "removeTodo", error });
+    }
+};
 exports.removeTodo = removeTodo;
 //# sourceMappingURL=todoController.js.map

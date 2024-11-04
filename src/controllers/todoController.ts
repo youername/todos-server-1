@@ -18,7 +18,7 @@ const createTodo = async (req: Request, res: Response) => {
 
     await todo.save();
 
-    res.status(200).json({ message: "Todo created successfully" });
+    res.status(200).json({ message: "Todo created successfully", todo });
   } catch (error) {
     res.status(500).json({ message: "Error creating user", error });
   }
@@ -99,6 +99,30 @@ const updateTodoIsDone = async (req: Request, res: Response) => {
   }
 };
 
-const removeTodo = async (req: Request, res: Response) => {};
+const removeTodo = async (req: Request, res: Response) => {
+  const { id } = req.body;
+
+  try {
+    const user = await User.findOneBy({ id: req.user?.id });
+
+    if (!user) {
+      throw res.status(400).json({ message: "Not found user" });
+    }
+
+    const todo = await Todo.findOneBy({ id, user });
+    if (!todo) {
+      throw res
+        .status(400)
+        .json({ message: "Not found todo or don't have permission" });
+    }
+    console.log("to delete");
+    await Todo.delete({ id });
+    console.log("deleted");
+
+    res.status(200).json({ message: "deleted todo" });
+  } catch (error) {
+    res.status(500).json({ message: "removeTodo", error });
+  }
+};
 
 export { createTodo, getTodos, updateTodo, updateTodoIsDone, removeTodo };
