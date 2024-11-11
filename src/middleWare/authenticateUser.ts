@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { redisClient, connectRedis } from "../redisClient";
+import { redisClient } from "../redisClient";
 import User from "../entities/user";
 
 interface JwtPayload {
@@ -19,30 +19,26 @@ export const authenticateUser = async (
   }
 
   try {
-    await connectRedis(); // Redis 연결 확인
-
     const isBlacklisted = await redisClient.get(token);
-    if (isBlacklisted) {
+    if (isBlacklisted === "isBlacklisted") {
       return res.status(401).json({ message: "Token is blacklisted" });
     }
 
-    // console.log("token", token);
-
     const decoded = jwt.verify(token, "your_jwt_secret") as JwtPayload;
-    // console.log("decoded", decoded);
 
-    if (!decoded) {
-      return res.status(401).json({ message: "Token is not valid" });
-    }
     const user = await User.findBy({ id: Number(decoded.id) });
-    if (!user) {
-      return res.status(401).json({ message: "not existed user" });
+    if (!user || user.length === 0) {
+      return res.status(401).json({ message: "User not found" });
     }
-    const { password, ...withoutPassword } = user[0];
+
+    const { password, photoBase64, ...withoutPassword } = user[0];
     req.user = withoutPassword;
     next();
   } catch (error) {
     console.error("Token verification error:", error);
-    return res.status(401).json({ message: "Token is not valid" });
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    return res.status(500).json({ message: "Internal server error" });
   }
 };

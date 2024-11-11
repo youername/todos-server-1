@@ -1,56 +1,45 @@
 import { Request, Response } from "express";
-import User from "../entities/user";
-import { redisClient } from "../redisClient";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import User, { Gender } from "../entities/user";
+
+interface UpdateUserData {
+  name?: string;
+  address?: string;
+  studentNum?: string;
+  photoBase64?: string;
+  gender?: Gender;
+}
 
 export const updateUser = async (req: Request, res: Response) => {
-  const { name, photoUrl, address, studentNum, photoBase64 } = req.body;
-  console.log("photoUrl", photoUrl);
-
   try {
-    const token = req.header("Authorization")?.replace("Bearer ", "");
+    console.log("updateUser", updateUser);
 
-    if (!token) {
-      console.error("--== es ==-- No token, authorization denied");
-      return;
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const isExist = await redisClient.get(token);
-    if (!isExist) {
-      console.error("--== es ==-- Token is blacklisted");
-      return;
-    }
+    const user = await User.findOneBy({ id: req.user.id });
 
-    const decoded = jwt.verify(
-      token,
-      "--== es ==-- your_jwt_secret"
-    ) as JwtPayload;
-
-    console.log("decoded", decoded);
-
-    if (!decoded) {
-      console.error("--== es ==-- Token is not valid");
-      return;
-    }
-
-    const user = await User.findOneBy({ id: Number(decoded.id) });
     if (!user) {
-      console.error("--== es ==-- not existed user");
-      return;
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // const user = new User();
-    user.name = name;
-    user.photoUrl = photoUrl;
-    user.address = address;
-    user.studentNum = studentNum;
-    user.photoBase64 = photoBase64;
+    // Update user fields
+    const { name, address, studentNum, photoBase64, gender }: UpdateUserData =
+      req.body;
+
+    Object.assign(user, {
+      name,
+      address,
+      studentNum,
+      photoBase64,
+      gender,
+    });
 
     await user.save();
 
-    res.status(201).json({ message: "User created successfully", user });
+    return res.status(200).json({ message: "User updated successfully", user });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error creating user", error });
+    console.error("Error updating user:", error);
+    return res.status(500).json({ message: "Error updating user" });
   }
 };

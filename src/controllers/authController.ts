@@ -4,15 +4,14 @@ import jwt from "jsonwebtoken";
 import { redisClient } from "../redisClient";
 
 const registerUser = async (req: Request, res: Response) => {
-  const { name, email, password, photoUrl } = req.body;
-  console.log("photoUrl", photoUrl);
+  const { name, email, password, photoBase64 } = req.body;
 
   try {
     const user = new User();
     user.name = name;
     user.email = email;
     user.password = password;
-    user.photoUrl = photoUrl;
+    user.photoBase64 = photoBase64;
 
     await user.save();
 
@@ -42,7 +41,12 @@ const loginUser = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign({ id: user.id }, "your_jwt_secret", {
-      expiresIn: "1h",
+      expiresIn: "7d",
+    });
+
+    // Redis에 토큰 저장 (토큰을 키로 사용)
+    await redisClient.set(token, String(user.id), {
+      EX: 10 * 60, // 10시간 (토큰의 유효기간과 일치)
     });
 
     return res.json({ token });
