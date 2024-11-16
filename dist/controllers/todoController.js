@@ -8,7 +8,7 @@ const todo_1 = require("../entities/todo");
 const user_1 = __importDefault(require("../entities/user"));
 const createTodo = async (req, res) => {
     var _a;
-    const { title, isDone, subTitle, color } = req.body;
+    const { title, isDone, subTitle, color, subTitleVisible } = req.body;
     try {
         const user = await user_1.default.findOne({ where: { id: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id } });
         const todo = new todo_1.Todo();
@@ -16,6 +16,7 @@ const createTodo = async (req, res) => {
         todo.subTitle = subTitle;
         todo.isDone = isDone;
         todo.color = color;
+        todo.subTitleVisible = subTitleVisible;
         if (user) {
             todo.user = user;
         }
@@ -44,7 +45,7 @@ const getTodos = async (req, res) => {
 exports.getTodos = getTodos;
 const updateTodo = async (req, res) => {
     var _a;
-    const { id, title, subTitle, atDate, isDone, color } = req.body;
+    const { id, title, subTitle, atDate, isDone, color, subTitleVisible } = req.body;
     try {
         const user = await user_1.default.findOneBy({ id: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id });
         if (!user) {
@@ -65,6 +66,8 @@ const updateTodo = async (req, res) => {
             updateFields.atDate = req.body.atDate;
         if ((req.body, isDone !== undefined))
             updateFields.isDone = req.body.isDone;
+        if ((req.body, subTitleVisible !== undefined))
+            updateFields.subTitleVisible = req.body.subTitleVisible;
         if ((req.body, color !== undefined))
             updateFields.color = req.body.color;
         await todo_1.Todo.update({ id }, updateFields);

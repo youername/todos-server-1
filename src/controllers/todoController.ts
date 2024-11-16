@@ -3,7 +3,7 @@ import { Todo } from "../entities/todo";
 import User from "../entities/user";
 
 const createTodo = async (req: Request, res: Response) => {
-  const { title, isDone, subTitle, color } = req.body;
+  const { title, isDone, subTitle, color, subTitleVisible } = req.body;
 
   try {
     // const todo = Todo.create({ title, isDone });
@@ -16,6 +16,7 @@ const createTodo = async (req: Request, res: Response) => {
     todo.subTitle = subTitle;
     todo.isDone = isDone;
     todo.color = color;
+    todo.subTitleVisible = subTitleVisible;
     if (user) {
       todo.user = user;
     }
@@ -45,7 +46,8 @@ const getTodos = async (req: Request, res: Response) => {
 };
 
 const updateTodo = async (req: Request, res: Response) => {
-  const { id, title, subTitle, atDate, isDone, color } = req.body;
+  const { id, title, subTitle, atDate, isDone, color, subTitleVisible } =
+    req.body;
 
   try {
     const user = await User.findOneBy({ id: req.user?.id });
@@ -68,6 +70,8 @@ const updateTodo = async (req: Request, res: Response) => {
       updateFields.subTitle = req.body.subTitle;
     if ((req.body, atDate !== undefined)) updateFields.atDate = req.body.atDate;
     if ((req.body, isDone !== undefined)) updateFields.isDone = req.body.isDone;
+    if ((req.body, subTitleVisible !== undefined))
+      updateFields.subTitleVisible = req.body.subTitleVisible;
     if ((req.body, color !== undefined)) updateFields.color = req.body.color;
 
     await Todo.update({ id }, updateFields);

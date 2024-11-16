@@ -47,6 +47,10 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Todo.prototype, "color", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: false }),
+    __metadata("design:type", Boolean)
+], Todo.prototype, "subTitleVisible", void 0);
 exports.Todo = Todo = __decorate([
     (0, typeorm_1.Entity)()
 ], Todo);

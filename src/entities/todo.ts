@@ -31,4 +31,7 @@ export class Todo extends BaseEntity {
 
   @Column({ nullable: true })
   color: string;
+
+  @Column({ nullable: false })
+  subTitleVisible: boolean;
 }
