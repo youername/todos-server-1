@@ -8,12 +8,14 @@ const todo_1 = require("../entities/todo");
 const user_1 = __importDefault(require("../entities/user"));
 const createTodo = async (req, res) => {
     var _a;
-    const { title, isDone } = req.body;
+    const { title, isDone, subTitle, color } = req.body;
     try {
         const user = await user_1.default.findOne({ where: { id: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id } });
         const todo = new todo_1.Todo();
         todo.title = title;
+        todo.subTitle = subTitle;
         todo.isDone = isDone;
+        todo.color = color;
         if (user) {
             todo.user = user;
         }
@@ -32,7 +34,7 @@ const getTodos = async (req, res) => {
         if (!user) {
             throw res.status(400).json({ message: "Not found user" });
         }
-        const todos = await todo_1.Todo.findBy({ user });
+        const todos = await todo_1.Todo.findBy({ user, isDone: false });
         res.status(200).json({ message: "Get todos successfully", todos });
     }
     catch (error) {

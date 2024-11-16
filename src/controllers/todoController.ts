@@ -3,15 +3,19 @@ import { Todo } from "../entities/todo";
 import User from "../entities/user";
 
 const createTodo = async (req: Request, res: Response) => {
-  const { title, isDone } = req.body;
+  const { title, isDone, subTitle, color } = req.body;
 
   try {
     // const todo = Todo.create({ title, isDone });
     const user = await User.findOne({ where: { id: req.user?.id } });
 
     const todo = new Todo();
+
+    //todo에서 .<=이게 title이라는 열을 생성함
     todo.title = title;
+    todo.subTitle = subTitle;
     todo.isDone = isDone;
+    todo.color = color;
     if (user) {
       todo.user = user;
     }
@@ -32,7 +36,7 @@ const getTodos = async (req: Request, res: Response) => {
     if (!user) {
       throw res.status(400).json({ message: "Not found user" });
     }
-    const todos = await Todo.findBy({ user });
+    const todos = await Todo.findBy({ user, isDone: false });
 
     res.status(200).json({ message: "Get todos successfully", todos });
   } catch (error) {
